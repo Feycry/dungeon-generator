@@ -13,7 +13,7 @@ Suunta on selkeä, mutta en ole vielä ehtinyt implementoimaan mitään.
 
 Palautin mieleen useita entuudestaan tuttuja konsepteja tarkastellessa A* ja Kruskalin algoritmeja.
 
-Delaunayn triangulaatio on minulle täysin uusi algoritmi. Ymmärsin joitain aspekteja sen toiminnassa wikipedian pseudokoodin ja katsomani youtube videon perusteella, mutta en koe vielä olevani valmis implementoimaan sitä. Olisi kiva löytää jokin kattava ja perusteellinen selitys algoritmista.
+Delaunayn triangulaatio on minulle täysin uusi algoritmi. Ymmärsin joitain aspekteja sen toiminnassa Wikipedian pseudokoodin ja katsomani Youtube videon perusteella, mutta en koe vielä olevani valmis implementoimaan sitä. Olisi kiva löytää jokin kattava ja perusteellinen selitys algoritmista.
 
 ### Mikä jäi epäselväksi tai tuottanut vaikeuksia?
 
