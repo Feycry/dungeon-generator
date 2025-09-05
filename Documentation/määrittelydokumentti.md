@@ -1,4 +1,5 @@
 Opinto-ohjelma: tietojenkäsittelytieteen kandidaatti
+
 Projektin kieli: tulen kommentoimaan koodia englanniksi. Toteutusdokumentin ja testausdokumentin kirjoitan todennäköisesti myös englanniksi.
 
 ### Mitä ohjelmointikieltä käytät?
@@ -22,7 +23,7 @@ Python ja C++.
 
 ### Minkä ongelman ratkaiset?
 
-Ongelmana on kaksiulotteisen luolaston / labyrintin / pelikartan luominen niin, että se on halutun kokoinenen.
+Ongelmana on kaksiulotteisen luolaston / labyrintin / pelikartan luominen niin, että se on halutun kokoinen.
 
 Lisäksi käyttäjän tulee pystyä määrittelemään lista koordinaatteja, joihin on ainakin luotava huone. Täten voidaan varmistaa, että kartasta löytyy esimerkiksi alareunasta aloitushuone ja yläreunasta maalihuone, joiden kautta luotu kartta voidaan yhdistää osaksi laajempaa pelimaailmaa.
 
@@ -68,7 +69,8 @@ Toiveena olisi siis, että projektia voi käyttää myöhemmin kirjastona, mutta
 Algoritmi tullaan oikeassa käytössä luultavasti suorittamaan vain kerran pelin alussa, joten riittää kunhan se suoritettaisiin esimerkiksi sekunnissa. Realistisen kokoisilla kartoilla (500 x 500) ei pitäisi olla mitään ongelmaa suoritusajan suhteen.
 
 n = huoneiden määrä
-l = kerkiverto käytävän pituus
+
+l = keskiverto käytävän pituus
 
 Huoneiden määrä on aina huomattavasti pienempi kuin kartan koko w * h.
 
@@ -104,15 +106,19 @@ Lista ei ole tietenkään kattava vielä tässä vaiheessa, mutta käytin näit�
 - https://en.wikipedia.org/wiki/Kruskal%27s_algorithm
 - https://en.wikipedia.org/wiki/A*_search_algorithm#Complexity
 
+
 - https://stackoverflow.com/questions/218060/random-gaussian-variables
 - https://vazgriz.com/119/procedurally-generated-dungeons/
 - https://github.com/vazgriz/DungeonGenerator
 - https://www.reddit.com/r/gamedev/comments/1dlwc4/procedural_dungeon_generation_algorithm_explained/
 
+
 - https://www.youtube.com/watch?v=-L-WgKMFuhE
 - https://www.youtube.com/watch?v=mZfyt03LDH4
 
+
 - https://raw.githubusercontent.com/hy-tira/tirakirja/master/tirakirja.pdf
+
 
 - https://www.youtube.com/watch?v=71UQH7Pr9kU
 - https://www.youtube.com/watch?v=GctAunEuHt4
