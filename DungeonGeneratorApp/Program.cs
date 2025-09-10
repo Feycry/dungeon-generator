@@ -4,7 +4,7 @@ class Program
 {
 	static void Main(string[] args)
 	{
-		string[] options = { "Generate dungeon", "Run unit tests", "Exit" };
+		string[] options = { "Generate dungeon", "Run unit tests", "Run drawing test", "Exit" };
 		bool running = true;
 		while (running)
 		{
@@ -26,6 +26,9 @@ class Program
 						RunUnitTests();
 						break;
 					case 3:
+						RunDrawingTest();
+						break;
+					case 4:
 						running = false;
 						Console.WriteLine("Exiting application. Goodbye!");
 						break;
@@ -87,5 +90,17 @@ class Program
 	static void Test3()
 	{
 		Console.WriteLine("Dummy Test3 executed.\n");
+	}
+
+	static void RunDrawingTest()
+	{
+		try
+		{
+			DrawingTest.Run();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Drawing test failed: {ex.Message}\n");
+		}
 	}
 }
