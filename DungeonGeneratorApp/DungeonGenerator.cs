@@ -53,6 +53,14 @@ public class DungeonGenerator
         if (fixedRooms != null)
             this.fixedRooms = new List<(int, int, int, int)>(fixedRooms);
 
+        foreach (var room in this.fixedRooms)
+        {
+            if (room.x < 0 || room.y < 0 || room.x + room.w > width || room.y + room.h > height)
+            {
+                throw new ArgumentException($"Fixed room at ({room.x}, {room.y}, {room.w}, {room.h}) is out of map bounds.");
+            }
+        }
+
         this.roomCount = roomCount ?? (int)Math.Floor(0.1 * (width + height));
         this.minRoomSideSize = minRoomSideSize;
         this.maxRoomSideSize = maxRoomSideSize;
