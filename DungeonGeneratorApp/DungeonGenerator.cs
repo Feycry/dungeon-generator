@@ -13,6 +13,10 @@ public class DungeonGenerator
     private double roomSideSizeMean = 4.0;
     private double roomSideSizeVariance = 1.6;
 
+    private List<(int x, int y, int w, int h)> rooms;
+    private MapGrid grid;
+
+
     /*
                         Syötteet:
                         - Kartan leveys, esim. 100 solua
@@ -45,8 +49,10 @@ public class DungeonGenerator
         this.width = width;
         this.height = height;
         this.seed = seed;
+
         if (fixedRooms != null)
             this.fixedRooms = new List<(int, int, int, int)>(fixedRooms);
+
         this.roomCount = roomCount ?? (int)Math.Floor(0.1 * (width + height));
         this.minRoomSideSize = minRoomSideSize;
         this.maxRoomSideSize = maxRoomSideSize;
@@ -57,12 +63,16 @@ public class DungeonGenerator
     {
         Console.WriteLine("Generation started");
 
+        rooms = new List<(int, int, int, int)>();
+        grid = new MapGrid(width, height);
+
         PlaceRooms();
         Triangulate();
     }
 
     void PlaceRooms()
     {
+        //Place initial rooms
 
     }
 
