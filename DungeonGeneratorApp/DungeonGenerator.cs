@@ -13,8 +13,9 @@ public class DungeonGenerator
     private double roomSideSizeMean = 4.0;
     private double roomSideSizeVariance = 1.6;
 
-    private List<(int x, int y, int w, int h)> rooms;
-    private MapGrid grid;
+    private List<(int x, int y, int w, int h)>? rooms;
+    private MapGrid? grid;
+    private Random random;
 
 
     /*
@@ -73,6 +74,7 @@ public class DungeonGenerator
 
         rooms = new List<(int, int, int, int)>();
         grid = new MapGrid(width, height);
+        random = new Random(seed);
 
         PlaceRooms();
         Triangulate();
@@ -80,7 +82,7 @@ public class DungeonGenerator
         grid.Print();
     }
 
-    void PlaceRooms()
+    private void PlaceRooms()
     {
         //Place initial rooms
         foreach (var room in this.fixedRooms)
@@ -89,9 +91,42 @@ public class DungeonGenerator
             grid.AddRoom(room);
         }
 
+        CreateRandomRoom();
+
     }
 
-    void Triangulate()
+    private void CreateRandomRoom()
+    {
+        int w = Math.Max(minRoomSideSize, Math.Min(maxRoomSideSize, (int)Math.Round(NormalRandom(roomSideSizeMean, roomSideSizeVariance))));
+        int h = Math.Max(minRoomSideSize, Math.Min(maxRoomSideSize, (int)Math.Round(NormalRandom(roomSideSizeMean, roomSideSizeVariance))));
+
+        //Sample center coordinates uniformly
+        double minCx = w / 2.0;
+        double maxCx = width - w / 2.0;
+        double minCy = h / 2.0;
+        double maxCy = height - h / 2.0;
+
+        double cx = minCx + random.NextDouble() * (maxCx - minCx);
+        double cy = minCy + random.NextDouble() * (maxCy - minCy);
+
+        int x = (int)Math.Round(cx - w / 2.0);
+        int y = (int)Math.Round(cy - h / 2.0);
+
+        rooms.Add((x, y, w, h));
+        grid.AddRoom((x, y, w, h));
+    }
+
+    //Maybe move this elsewhere?
+    private double NormalRandom(double mean, double variance)
+    {
+        //Box-Muller transform
+        double u1 = 1.0 - random.NextDouble();
+        double u2 = 1.0 - random.NextDouble();
+        double randStdNormal = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Sin(2.0 * Math.PI * u2);
+        return mean + Math.Sqrt(variance) * randStdNormal;
+    }
+
+    private void Triangulate()
     {
 
     }
