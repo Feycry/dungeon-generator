@@ -43,7 +43,18 @@ class Program
 
 	static void GenerateDungeon()
 	{
-		Console.WriteLine("[Dungeon generation logic goes here]\n");
+		//Console.WriteLine("[Dungeon generation logic goes here]\n");
+		var generator = new DungeonGenerator(
+			50,
+			50,
+			0,
+
+			new List<(int, int, int, int)> {
+				(4, 4, 10, 10)
+			}
+		);
+
+		generator.Generate();
 	}
 
 	static void RunUnitTests()

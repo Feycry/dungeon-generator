@@ -76,11 +76,18 @@ public class DungeonGenerator
 
         PlaceRooms();
         Triangulate();
+
+        grid.Print();
     }
 
     void PlaceRooms()
     {
         //Place initial rooms
+        foreach (var room in this.fixedRooms)
+        {
+            rooms.Add(room);
+            grid.AddRoom(room);
+        }
 
     }
 
