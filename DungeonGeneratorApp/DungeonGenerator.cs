@@ -74,7 +74,12 @@ public class DungeonGenerator
 
         rooms = new List<(int, int, int, int)>();
         grid = new MapGrid(width, height);
-        random = new Random(seed);
+
+        if (seed == -1)
+            //Random seed if seed = -1
+            random = new Random();
+        else
+            random = new Random(seed);
 
         PlaceRooms();
         Triangulate();
@@ -98,7 +103,7 @@ public class DungeonGenerator
 
     }
 
-    private void CreateRandomRoom()
+    private bool CreateRandomRoom()
     {
         int w = Math.Max(minRoomSideSize, Math.Min(maxRoomSideSize, (int)Math.Round(NormalRandom(roomSideSizeMean, roomSideSizeVariance))));
         int h = Math.Max(minRoomSideSize, Math.Min(maxRoomSideSize, (int)Math.Round(NormalRandom(roomSideSizeMean, roomSideSizeVariance))));
@@ -115,8 +120,14 @@ public class DungeonGenerator
         int x = (int)Math.Round(cx - w / 2.0);
         int y = (int)Math.Round(cy - h / 2.0);
 
+        if (!grid.AddRoom((x, y, w, h)))
+        {
+            return false;
+        }
+
         rooms.Add((x, y, w, h));
-        grid.AddRoom((x, y, w, h));
+
+        return true;
     }
 
     //Maybe move this elsewhere?

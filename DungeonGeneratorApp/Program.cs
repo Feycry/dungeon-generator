@@ -48,7 +48,7 @@ class Program
 			var generator = new DungeonGenerator(
 				30,
 				30,
-				0,
+				-1,
 
 				new List<(int, int, int, int)> {
 					(4, 4, 4, 4)
