@@ -13,9 +13,9 @@ public class DungeonGenerator
     private double roomSideSizeMean = 4.0;
     private double roomSideSizeVariance = 1.6;
 
-    private List<(int x, int y, int w, int h)>? rooms;
-    private MapGrid? grid;
-    private Random random;
+    private List<(int x, int y, int w, int h)> rooms = new List<(int, int, int, int)>();
+    private MapGrid grid = new MapGrid(1, 1);
+    private Random random = new Random(0);
 
 
     /*
@@ -91,7 +91,10 @@ public class DungeonGenerator
             grid.AddRoom(room);
         }
 
-        CreateRandomRoom();
+        for (int i = 0; i < roomCount; i++)
+        {
+            CreateRandomRoom();
+        }
 
     }
 
