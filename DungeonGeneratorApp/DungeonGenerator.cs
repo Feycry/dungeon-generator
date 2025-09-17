@@ -72,6 +72,9 @@ public class DungeonGenerator
     {
         Console.WriteLine("Generation started");
 
+        //DEBUG: Set dungeon bounds for debug snapshot manager
+        DebugSnapshotManager.Instance.SetDungeonBounds(width, height);
+
         rooms = new List<Room>();
         grid = new MapGrid(width, height);
 
@@ -107,6 +110,14 @@ public class DungeonGenerator
             CreateRandomRoom();
         }
 
+        //DEBUG: Add a single snapshot after all rooms have been placed
+        DebugSnapshotManager.Instance.SetCategory("room placement");
+        var points = new List<(double x, double y)>();
+        foreach (var r in rooms)
+        {
+            points.Add(r.GetCenter());
+        }
+        DebugSnapshotManager.Instance.AddSnapshot(points, new List<(double, double, double, double)>());
     }
 
     private bool CreateRandomRoom()

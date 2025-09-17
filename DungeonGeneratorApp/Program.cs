@@ -4,7 +4,7 @@ class Program
 {
 	static void Main(string[] args)
 	{
-		string[] options = { "Generate dungeon", "Run unit tests", "Run drawing test (Windows only)", "Exit" };
+		string[] options = { "Generate dungeon", "Run unit tests", "Draw generation steps (Windows only)", "Exit" };
 		bool running = true;
 		while (running)
 		{
@@ -45,6 +45,10 @@ class Program
 	{
 		try
 		{
+			// Clear debug snapshots before generation
+			DebugSnapshotManager.Instance.ClearAllSnapshots(); // clear all categories
+			DebugSnapshotManager.Instance.SetCategory("Triangulation"); // or whatever default you want
+
 			var generator = new DungeonGenerator(
 				30,
 				30,
@@ -114,7 +118,23 @@ class Program
 	{
 		try
 		{
-			DrawingTest.Run();
+			// Draw a series of images for each snapshot
+			var snapshots = DebugSnapshotManager.Instance.GetSnapshots();
+			if (snapshots.Count == 0)
+			{
+				Console.WriteLine("No debug snapshots found. Please generate a dungeon first.\n");
+				return;
+			}
+
+			int index = 0;
+			foreach (var snapshot in snapshots)
+			{
+				string fileName = $"../../../../images/step_{index:D3}.png";
+				Visualize.DrawGraph(snapshot.Points, snapshot.Lines, fileName, snapshot.Category, index);
+				Console.WriteLine($"Saved snapshot {index} as {fileName}");
+				index++;
+			}
+			Console.WriteLine($"{index} snapshot images created.\n");
 		}
 		catch (Exception ex)
 		{
