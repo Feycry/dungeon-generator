@@ -16,6 +16,8 @@ public class DungeonGenerator
     private List<Room> rooms = new List<Room>();
     private MapGrid grid = new MapGrid(1, 1);
     private Random random = new Random(0);
+    private List<(double x, double y)> nodes = new List<(double, double)>();
+    private List<Edge> delaunayEdges = new List<Edge>();
 
 
     /*
@@ -77,6 +79,8 @@ public class DungeonGenerator
 
         rooms = new List<Room>();
         grid = new MapGrid(width, height);
+        nodes = new List<(double, double)>();
+
 
         if (seed == -1)
             //Random seed if seed = -1
@@ -110,14 +114,14 @@ public class DungeonGenerator
             CreateRandomRoom();
         }
 
-        //DEBUG: Add a single snapshot after all rooms have been placed
-        DebugSnapshotManager.Instance.SetCategory("room placement");
-        var points = new List<(double x, double y)>();
         foreach (var r in rooms)
         {
-            points.Add(r.GetCenter());
+            nodes.Add(r.GetCenter());
         }
-        DebugSnapshotManager.Instance.AddSnapshot(points, new List<(double, double, double, double)>());
+
+        //DEBUG: Add a single snapshot after all rooms have been placed
+        DebugSnapshotManager.Instance.SetCategory("room placement");
+        DebugSnapshotManager.Instance.AddSnapshot(nodes, new List<(double, double, double, double)>());
     }
 
     private bool CreateRandomRoom()
@@ -159,7 +163,8 @@ public class DungeonGenerator
 
     private void Triangulate()
     {
-
+        var delaunay = new Delaunay(nodes);
+        delaunayEdges = delaunay.Triangulate();
     }
     
     
