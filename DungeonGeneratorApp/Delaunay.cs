@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 namespace DungeonGeneratorApp;
 
@@ -7,11 +8,56 @@ public class Triangle {
     public (double x, double y) B { get; set; }
     public (double x, double y) C { get; set; }
 
+    public List<(double x1, double y1, double x2, double y2)> Edges = new List<(double x1, double y1, double x2, double y2)>();
+
     public Triangle((double x, double y) a, (double x, double y) b, (double x, double y) c)
     {
-        A = a;
-        B = b;
-        C = c;
+        var vertices = new List<(double x, double y)> { a, b, c };
+        vertices.Sort((v1, v2) =>
+        {
+            int cmp = v1.x.CompareTo(v2.x);
+            if (cmp == 0)
+                return v1.y.CompareTo(v2.y);
+            return cmp;
+        });
+
+        A = vertices[0];
+        B = vertices[1];
+        C = vertices[2];
+
+        Edges.Add((A.x, A.y, B.x, B.y));
+        Edges.Add((B.x, B.y, C.x, C.y));
+        Edges.Add((C.x, C.y, A.x, A.y));
+    }
+
+    //https://en.wikipedia.org/wiki/Circumcircle#Cartesian_coordinates
+    public bool InCircumcircle((double x, double y) point)
+    {
+        var a = A;
+        var b = B;
+        var c = C;
+
+        b = (b.x - a.x, b.y - a.y);
+        c = (c.x - a.x, c.y - a.y);
+
+        var d = 2 * (b.x * c.y - b.y * c.x);
+
+        var ux = (c.y * (Math.Pow(b.x, 2) + Math.Pow(b.y, 2)) - b.y * (Math.Pow(c.x, 2) + Math.Pow(c.y, 2))) / d;
+        var uy = (b.x * (Math.Pow(c.x, 2) + Math.Pow(c.y, 2)) - c.x * (Math.Pow(b.x, 2) + Math.Pow(b.y, 2))) / d;
+
+        //Now U' = (ux, uy) is the circumcenter relative to A
+        //The actual circumcenter U = U' + A = (ux + a.x, uy + a.y)
+        var circumcenterX = ux + a.x;
+        var circumcenterY = uy + a.y;
+
+        //The radius of the circumcircle is
+        var radius = Math.Sqrt(Math.Pow(ux, 2) + Math.Pow(uy, 2));
+
+        //Calculate distance from point to the actual circumcenter
+        var distance = Math.Sqrt(Math.Pow(point.x - circumcenterX, 2) + Math.Pow(point.y - circumcenterY, 2));
+
+        //If it's nearer than the radius, it's inside the circumcircle
+        return distance < radius;
     }
 
     //For unit tests
@@ -92,7 +138,102 @@ public class Delaunay
         }
         DebugSnapshotManager.Instance.AddSnapshot(trianglePoints, triangleLines);
 
-        
+
+        foreach (var node in nodes)
+        {
+            var badTriangles = new List<Triangle>();
+
+            foreach (var tri in triangulation)
+            {
+                if (tri.ContainsPoint(node))
+                {
+                    badTriangles.Add(tri);
+                }
+            }
+
+            var polygon = new List<(double x1, double y1, double x2, double y2)>();
+
+            foreach (var tri in badTriangles)
+            {
+                foreach (var edge in tri.Edges)
+                {
+                    //if edge is not shared by any other triangles in badTriangles
+                    var shared = false;
+                    foreach (var tri2 in badTriangles)
+                    {
+                        foreach (var edge2 in tri2.Edges)
+                        {
+                            if (tri != tri2 && edge == edge2) shared = true;
+                        }
+                    }
+
+                    if (!shared) polygon.Add(edge);
+                }
+            }
+
+            foreach (var tri in badTriangles)
+            {
+                //Remove from triagulation
+                triangulation.Remove(tri);
+            }
+
+            foreach (var edge in polygon)
+            {
+                //Add new triangle to triangulation
+                triangulation.Add(new Triangle(
+                    (edge.x1, edge.y1),
+                    (edge.x2, edge.y2),
+                    (node.x, node.y)
+                ));
+            }
+
+        }
+
+        //DEBUG: Create snapshot
+        DebugSnapshotManager.Instance.SetCategory("delaunay triangulation before cleanup");
+        triangleLines = new List<(double x1, double y1, double x2, double y2)>();
+        trianglePoints = new List<(double x, double y)>();
+        // Add all nodes (room centers) to the points for visualization
+        trianglePoints.AddRange(nodes);
+        foreach (var triangle in triangulation)
+        {
+            triangleLines.AddRange(triangle.GetLines());
+        }
+        DebugSnapshotManager.Instance.AddSnapshot(trianglePoints, triangleLines);
+
+
+        var trianglesToRemove = new List<Triangle>();
+        foreach (var tri in triangulation)
+        {
+            //Clean up triangles that share a node from the super triangle
+            foreach (var edge in SuperTriangle.Edges)
+            {
+                var n1 = (edge.x1, edge.y1);
+                var n2 = (edge.x2, edge.y2);
+                if (tri.A == n1 || tri.B == n1 || tri.C == n1 ||
+                    tri.A == n2 || tri.B == n2 || tri.C == n2)
+                {
+                    trianglesToRemove.Add(tri);
+                    break;
+                }
+            }
+        }
+        foreach (var tri in trianglesToRemove)
+        {
+            triangulation.Remove(tri);
+        }
+
+        //DEBUG: Create snapshot of complete triangulation
+        DebugSnapshotManager.Instance.SetCategory("delaunay triangulation done");
+        triangleLines = new List<(double x1, double y1, double x2, double y2)>();
+        trianglePoints = new List<(double x, double y)>();
+        // Add all nodes (room centers) to the points for visualization
+        trianglePoints.AddRange(nodes);
+        foreach (var triangle in triangulation)
+        {
+            triangleLines.AddRange(triangle.GetLines());
+        }
+        DebugSnapshotManager.Instance.AddSnapshot(trianglePoints, triangleLines);
 
         return delaunayEdges;
     }
