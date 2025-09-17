@@ -52,8 +52,8 @@ class Program
 			DebugSnapshotManager.Instance.SetCategory("Triangulation"); // or whatever default you want
 
 			var generator = new DungeonGenerator(
-				300,
-				10,
+				30,
+				30,
 				-1,
 
 				new List<(int, int, int, int)> {
