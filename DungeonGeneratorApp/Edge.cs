@@ -35,6 +35,7 @@ public class Edge
 
     public override string ToString() => $"Edge: {Room1.Id} - {Room2.Id} (Weight: {Weight})";
     
+    //DEBUG
     public (double x1, double y1, double x2, double y2) GetLine()
     {
         return (Room1.CenterX, Room1.CenterY, Room2.CenterX, Room2.CenterY);

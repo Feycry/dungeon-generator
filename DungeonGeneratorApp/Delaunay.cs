@@ -11,6 +11,17 @@ public class Triangle {
         B = b;
         C = c;
     }
+
+    //DEBUG
+    public List<(double x1, double y1, double x2, double y2)> GetLines()
+    {
+        return new List<(double x1, double y1, double x2, double y2)>
+        {
+            (A.x, A.y, B.x, B.y),
+            (B.x, B.y, C.x, C.y),
+            (C.x, C.y, A.x, A.y)
+        };
+    }
 }
 
 //Bowyer–Watson algorithm implementation
@@ -40,10 +51,22 @@ public class Delaunay
         triangulation.Add(new Triangle(
             (-maxX, 1.1 * maxY),
             (2 * maxX, 1.1 * maxY),
-            (1.5 * maxX, -2 * maxY)
+            (maxX, -1.9 * maxY)
         ));
 
+        //DEBUG: Create snapshot of super triangle
+        DebugSnapshotManager.Instance.SetCategory("delaunay triangulation");
+        var triangleLines = new List<(double x1, double y1, double x2, double y2)>();
+        var trianglePoints = new List<(double x, double y)>();
+        // Add all nodes (room centers) to the points for visualization
+        trianglePoints.AddRange(nodes);
+        foreach (var triangle in triangulation)
+        {
+            triangleLines.AddRange(triangle.GetLines());
+        }
+        DebugSnapshotManager.Instance.AddSnapshot(trianglePoints, triangleLines);
 
+        
 
         return delaunayEdges;
     }

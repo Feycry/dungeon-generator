@@ -12,11 +12,11 @@ public static class Visualize
 		string? category = null,
 		int? stepNumber = null)
 	{
-		int imgWidth = 400, imgHeight = 400;
+		int imgWidth = 800, imgHeight = 600;
 		// Get dungeon bounds
 		var (dungeonWidth, dungeonHeight) = DebugSnapshotManager.Instance.GetDungeonBounds();
-		// Margin as a fraction of dungeon size (e.g., 20%)
-		double marginFrac = 0.2;
+		// Margin as a fraction of dungeon size (adjusted to accommodate super triangle)
+		double marginFrac = 0.3; // Reduced from 1.0 to 0.3 for better balance
 		double marginX = dungeonWidth * marginFrac;
 		double marginY = dungeonHeight * marginFrac;
 		double totalWidth = dungeonWidth + 2 * marginX;
@@ -35,16 +35,19 @@ public static class Visualize
 		using var g = Graphics.FromImage(bmp);
 		g.Clear(Color.White);
 
-		// Draw title (category and step number) at the top
+		// Draw title (step number and category) at the top
 		string title = "";
-		if (!string.IsNullOrEmpty(category))
-		{
-			title += category;
-		}
 		if (stepNumber.HasValue)
 		{
-			if (title.Length > 0) title += " ";
-			title += $"step {stepNumber.Value}";
+			title = $"step {stepNumber.Value}";
+			if (!string.IsNullOrEmpty(category))
+			{
+				title += $": {category}";
+			}
+		}
+		else if (!string.IsNullOrEmpty(category))
+		{
+			title = category;
 		}
 		if (title.Length > 0)
 		{

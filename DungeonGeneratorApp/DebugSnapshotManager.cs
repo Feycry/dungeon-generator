@@ -51,6 +51,17 @@ public class DebugSnapshotManager
         return snapshotsByCategory.TryGetValue(cat, out var list) ? list : new List<DebugSnapshot>();
     }
 
+    // Retrieve all snapshots from all categories in chronological order
+    public List<DebugSnapshot> GetAllSnapshots()
+    {
+        var allSnapshots = new List<DebugSnapshot>();
+        foreach (var categorySnapshots in snapshotsByCategory.Values)
+        {
+            allSnapshots.AddRange(categorySnapshots);
+        }
+        return allSnapshots;
+    }
+
     // Clear snapshots for the specified or current category
     public void ClearSnapshots(string? category = null)
     {

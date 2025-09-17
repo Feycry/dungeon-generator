@@ -26,7 +26,7 @@ class Program
 						RunUnitTests();
 						break;
 					case 3:
-						RunDrawingTest();
+						DrawSnapshots();
 						break;
 					case 4:
 						running = false;
@@ -50,8 +50,8 @@ class Program
 			DebugSnapshotManager.Instance.SetCategory("Triangulation"); // or whatever default you want
 
 			var generator = new DungeonGenerator(
-				30,
-				30,
+				300,
+				10,
 				-1,
 
 				new List<(int, int, int, int)> {
@@ -114,12 +114,12 @@ class Program
 		Console.WriteLine("Dummy Test3 executed.\n");
 	}
 
-	static void RunDrawingTest()
+	static void DrawSnapshots()
 	{
 		try
 		{
-			// Draw a series of images for each snapshot
-			var snapshots = DebugSnapshotManager.Instance.GetSnapshots();
+			// Draw a series of images for each snapshot from all categories
+			var snapshots = DebugSnapshotManager.Instance.GetAllSnapshots();
 			if (snapshots.Count == 0)
 			{
 				Console.WriteLine("No debug snapshots found. Please generate a dungeon first.\n");
