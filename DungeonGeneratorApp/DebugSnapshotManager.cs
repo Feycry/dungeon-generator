@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+namespace DungeonGeneratorApp;
+
 public class DebugSnapshotManager
 {
     private static DebugSnapshotManager? _instance;

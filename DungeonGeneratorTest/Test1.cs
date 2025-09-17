@@ -1,4 +1,6 @@
-﻿namespace DungeonGeneratorTest;
+﻿using DungeonGeneratorApp;
+
+namespace DungeonGeneratorTest;
 
 [TestClass]
 public sealed class Test1

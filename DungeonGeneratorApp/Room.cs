@@ -1,5 +1,7 @@
 using System;
 
+namespace DungeonGeneratorApp;
+
 public class Room
 {
     private static int nextId = 0;

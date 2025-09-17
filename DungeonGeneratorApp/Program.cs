@@ -1,5 +1,7 @@
 ﻿using System;
 
+namespace DungeonGeneratorApp;
+
 class Program
 {
 	static void Main(string[] args)

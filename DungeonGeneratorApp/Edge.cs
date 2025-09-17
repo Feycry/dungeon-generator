@@ -1,5 +1,7 @@
 using System;
 
+namespace DungeonGeneratorApp;
+
 public class Edge
 {
     public Room Room1 { get; }

@@ -1,5 +1,7 @@
 using System;
 
+namespace DungeonGeneratorApp;
+
 public class DungeonGenerator
 {
     private int width;

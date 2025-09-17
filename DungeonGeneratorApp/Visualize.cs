@@ -1,6 +1,8 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 
+namespace DungeonGeneratorApp;
+
 public static class Visualize
 {
 	// Draws a graph from points and lines, saves to fileName

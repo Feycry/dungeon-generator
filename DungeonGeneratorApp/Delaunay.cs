@@ -1,5 +1,7 @@
 using System;
 
+namespace DungeonGeneratorApp;
+
 public class Triangle {
     public (double x, double y) A { get; set; }
     public (double x, double y) B { get; set; }
