@@ -13,7 +13,7 @@ public class DungeonGenerator
     private double roomSideSizeMean = 4.0;
     private double roomSideSizeVariance = 1.6;
 
-    private List<(int x, int y, int w, int h)> rooms = new List<(int, int, int, int)>();
+    private List<Room> rooms = new List<Room>();
     private MapGrid grid = new MapGrid(1, 1);
     private Random random = new Random(0);
 
@@ -72,7 +72,7 @@ public class DungeonGenerator
     {
         Console.WriteLine("Generation started");
 
-        rooms = new List<(int, int, int, int)>();
+        rooms = new List<Room>();
         grid = new MapGrid(width, height);
 
         if (seed == -1)
@@ -92,8 +92,14 @@ public class DungeonGenerator
         //Place initial rooms
         foreach (var room in this.fixedRooms)
         {
-            rooms.Add(room);
-            grid.AddRoom(room);
+            if (grid.AddRoom(room))
+            {
+                rooms.Add(new Room(room.x, room.y, room.w, room.h));
+            }
+            else
+            {
+                throw new ArgumentException($"Fixed room ({room.x}, {room.y}, {room.w}, {room.h}) could not be placed (possibly overlapping)");
+            }
         }
 
         for (int i = 0; i < roomCount; i++)
@@ -125,7 +131,7 @@ public class DungeonGenerator
             return false;
         }
 
-        rooms.Add((x, y, w, h));
+        rooms.Add(new Room(x, y, w, h));
 
         return true;
     }
