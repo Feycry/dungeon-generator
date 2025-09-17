@@ -25,6 +25,11 @@ public class Room
     }
 
     public override string ToString() => $"Room {Id}: ({X},{Y},{Width},{Height})";
-    
+
     public static void ResetIdCounter() { nextId = 0; }
+    
+    public (double x, double y) GetCenter()
+    {
+        return (CenterX, CenterY);
+    }
 }
