@@ -76,9 +76,9 @@ public sealed class SuperTriangleTest
             Assert.IsTrue(delaunay.SuperTriangle.ContainsPoint(n), $"({n.x}, {n.y}) should be inside super triangle");
         }
     }
-    
+
     [TestMethod]
-    public void TestSuperTriangleNarrow()
+    public void TestSuperTriangleWide()
     {
         //Arrange
         var nodes = new List<(double x, double y)>
@@ -86,6 +86,29 @@ public sealed class SuperTriangleTest
             (10000000, 1),
             (15000000, 3),
             (80000000, 2)
+        };
+
+        var delaunay = new Delaunay(nodes);
+
+        //Act
+        delaunay.Triangulate();
+
+        Assert.IsNotNull(delaunay.SuperTriangle);
+        foreach (var n in nodes)
+        {
+            Assert.IsTrue(delaunay.SuperTriangle.ContainsPoint(n), $"({n.x}, {n.y}) should be inside super triangle");
+        }
+    }
+    
+    [TestMethod]
+    public void TestSuperTriangleNarrow()
+    {
+        //Arrange
+        var nodes = new List<(double x, double y)>
+        {
+            (4, 1209345),
+            (2, 123513946),
+            (5, 103947562340986)
         };
 
         var delaunay = new Delaunay(nodes);
