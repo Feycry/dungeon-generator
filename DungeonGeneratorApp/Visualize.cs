@@ -1,5 +1,4 @@
-using System.Drawing;
-using System.Drawing.Imaging;
+using SkiaSharp;
 
 namespace DungeonGeneratorApp;
 
@@ -33,9 +32,9 @@ public static class Visualize
 		double offsetX = (imgWidth - dungeonWidth * scale) / 2.0 - marginX * scale;
 		double offsetY = (imgHeight - dungeonHeight * scale) / 2.0 - marginY * scale;
 
-		using var bmp = new Bitmap(imgWidth, imgHeight);
-		using var g = Graphics.FromImage(bmp);
-		g.Clear(Color.White);
+		using var surface = SKSurface.Create(new SKImageInfo(imgWidth, imgHeight));
+		var canvas = surface.Canvas;
+		canvas.Clear(SKColors.White);
 
 		// Draw title (step number and category) at the top
 		string title = "";
@@ -53,11 +52,15 @@ public static class Visualize
 		}
 		if (title.Length > 0)
 		{
-			using var font = new Font("Arial", 14);
-			var textSize = g.MeasureString(title, font);
-			float textX = (imgWidth - textSize.Width) / 2f;
-			float textY = 8;
-			g.DrawString(title, font, Brushes.Black, textX, textY);
+			using var paint = new SKPaint();
+			paint.Color = SKColors.Black;
+			paint.TextSize = 14;
+			paint.Typeface = SKTypeface.FromFamilyName("Arial");
+			var textBounds = new SKRect();
+			paint.MeasureText(title, ref textBounds);
+			float textX = (imgWidth - textBounds.Width) / 2f;
+			float textY = 20 - textBounds.Top; // Adjust for baseline
+			canvas.DrawText(title, textX, textY, paint);
 		}
 
 		// Optionally, draw the dungeon rectangle
@@ -65,30 +68,57 @@ public static class Visualize
 		var rectY = offsetY + marginY * scale;
 		var rectW = dungeonWidth * scale;
 		var rectH = dungeonHeight * scale;
-		using (var pen = new Pen(Color.LightGray, 1))
+		using (var paint = new SKPaint())
 		{
-			g.DrawRectangle(pen, (float)rectX, (float)rectY, (float)rectW, (float)rectH);
+			paint.Color = SKColors.LightGray;
+			paint.Style = SKPaintStyle.Stroke;
+			paint.StrokeWidth = 1;
+			canvas.DrawRect((float)rectX, (float)rectY, (float)rectW, (float)rectH, paint);
 		}
 
 		// Draw edges (lines)
-		foreach (var (x1, y1, x2, y2) in lines)
+		using (var linePaint = new SKPaint())
 		{
-			float sx1 = (float)(offsetX + (x1 + marginX) * scale);
-			float sy1 = (float)(offsetY + (y1 + marginY) * scale);
-			float sx2 = (float)(offsetX + (x2 + marginX) * scale);
-			float sy2 = (float)(offsetY + (y2 + marginY) * scale);
-			g.DrawLine(Pens.Black, sx1, sy1, sx2, sy2);
+			linePaint.Color = SKColors.Black;
+			linePaint.Style = SKPaintStyle.Stroke;
+			linePaint.StrokeWidth = 1;
+			
+			foreach (var (x1, y1, x2, y2) in lines)
+			{
+				float sx1 = (float)(offsetX + (x1 + marginX) * scale);
+				float sy1 = (float)(offsetY + (y1 + marginY) * scale);
+				float sx2 = (float)(offsetX + (x2 + marginX) * scale);
+				float sy2 = (float)(offsetY + (y2 + marginY) * scale);
+				canvas.DrawLine(sx1, sy1, sx2, sy2, linePaint);
+			}
 		}
 
 		// Draw nodes (circles)
-		foreach (var (x, y) in points)
+		using (var fillPaint = new SKPaint())
 		{
-			float sx = (float)(offsetX + (x + marginX) * scale);
-			float sy = (float)(offsetY + (y + marginY) * scale);
-			g.FillEllipse(Brushes.LightBlue, sx - 8, sy - 8, 16, 16);
-			g.DrawEllipse(Pens.Black, sx - 8, sy - 8, 16, 16);
+			fillPaint.Color = SKColors.LightBlue;
+			fillPaint.Style = SKPaintStyle.Fill;
+			
+			using (var strokePaint = new SKPaint())
+			{
+				strokePaint.Color = SKColors.Black;
+				strokePaint.Style = SKPaintStyle.Stroke;
+				strokePaint.StrokeWidth = 1;
+				
+				foreach (var (x, y) in points)
+				{
+					float sx = (float)(offsetX + (x + marginX) * scale);
+					float sy = (float)(offsetY + (y + marginY) * scale);
+					canvas.DrawCircle(sx, sy, 8, fillPaint);
+					canvas.DrawCircle(sx, sy, 8, strokePaint);
+				}
+			}
 		}
 
-		bmp.Save(fileName, ImageFormat.Png);
+		// Save the image
+		using var image = surface.Snapshot();
+		using var data = image.Encode(SKEncodedImageFormat.Png, 100);
+		using var stream = File.OpenWrite(fileName);
+		data.SaveTo(stream);
 	}
 }
