@@ -4,42 +4,42 @@ namespace DungeonGeneratorApp;
 
 public class Edge
 {
-    public Room Room1 { get; }
-    public Room Room2 { get; }
+    public (double x, double y) A { get; }
+    public (double x, double y) B { get; }
 
-    //Euclidean distance between room centers
+    //Euclidean distance between points
     public double Weight => Math.Sqrt(
-        Math.Pow(Room1.CenterX - Room2.CenterX, 2) +
-        Math.Pow(Room1.CenterY - Room2.CenterY, 2));
+        Math.Pow(B.x - A.x, 2) +
+        Math.Pow(B.y - A.y, 2));
 
-    public Edge(Room room1, Room room2)
+    public Edge((double x, double y) point1, (double x, double y) point2)
     {
         //Ensure consistent ordering for comparison
-        if (room1.Id < room2.Id)
+        if (point1.x < point2.x || (point1.x == point2.x && point1.y < point2.y))
         {
-            Room1 = room1;
-            Room2 = room2;
+            A = point1;
+            B = point2;
         }
         else
         {
-            Room1 = room2;
-            Room2 = room1;
+            A = point2;
+            B = point1;
         }
     }
 
     public override bool Equals(object? obj)
     {
         if (obj is not Edge other) return false;
-        return Room1.Id == other.Room1.Id && Room2.Id == other.Room2.Id;
+        return A.Equals(other.A) && B.Equals(other.B);
     }
 
-    public override int GetHashCode() => HashCode.Combine(Room1.Id, Room2.Id);
+    public override int GetHashCode() => HashCode.Combine(A, B);
 
-    public override string ToString() => $"Edge: {Room1.Id} - {Room2.Id} (Weight: {Weight})";
+    public override string ToString() => $"Edge: ({A.x}, {A.y}) - ({B.x}, {B.y}) (Weight: {Weight})";
     
     //DEBUG
     public (double x1, double y1, double x2, double y2) GetLine()
     {
-        return (Room1.CenterX, Room1.CenterY, Room2.CenterX, Room2.CenterY);
+        return (A.x, A.y, B.x, B.y);
     }
 }

@@ -6,7 +6,7 @@ class Program
 {
 	static void Main(string[] args)
 	{
-		string[] options = { "Generate dungeon", "Run unit tests", "Draw generation steps (Windows only)", "Exit" };
+		string[] options = { "Generate dungeon", "Run unit tests", "Draw generation steps", "Exit" };
 		bool running = true;
 		while (running)
 		{

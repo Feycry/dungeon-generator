@@ -8,7 +8,7 @@ public class Triangle {
     public (double x, double y) B { get; set; }
     public (double x, double y) C { get; set; }
 
-    public List<(double x1, double y1, double x2, double y2)> Edges = new List<(double x1, double y1, double x2, double y2)>();
+    public List<Edge> Edges = new List<Edge>();
 
     public Triangle((double x, double y) a, (double x, double y) b, (double x, double y) c)
     {
@@ -25,9 +25,9 @@ public class Triangle {
         B = vertices[1];
         C = vertices[2];
 
-        Edges.Add((A.x, A.y, B.x, B.y));
-        Edges.Add((B.x, B.y, C.x, C.y));
-        Edges.Add((C.x, C.y, A.x, A.y));
+        Edges.Add(new Edge(A, B));
+        Edges.Add(new Edge(B, C));
+        Edges.Add(new Edge(C, A));
     }
 
     //https://en.wikipedia.org/wiki/Circumcircle#Cartesian_coordinates
@@ -83,12 +83,7 @@ public class Triangle {
     //DEBUG
     public List<(double x1, double y1, double x2, double y2)> GetLines()
     {
-        return new List<(double x1, double y1, double x2, double y2)>
-        {
-            (A.x, A.y, B.x, B.y),
-            (B.x, B.y, C.x, C.y),
-            (C.x, C.y, A.x, A.y)
-        };
+        return Edges.Select(e => e.GetLine()).ToList();
     }
 }
 
@@ -145,13 +140,13 @@ public class Delaunay
 
             foreach (var tri in triangulation)
             {
-                if (tri.ContainsPoint(node))
+                if (tri.InCircumcircle(node))
                 {
                     badTriangles.Add(tri);
                 }
             }
 
-            var polygon = new List<(double x1, double y1, double x2, double y2)>();
+            var polygon = new List<Edge>();
 
             foreach (var tri in badTriangles)
             {
@@ -163,7 +158,7 @@ public class Delaunay
                     {
                         foreach (var edge2 in tri2.Edges)
                         {
-                            if (tri != tri2 && edge == edge2) shared = true;
+                            if (tri != tri2 && edge.Equals(edge2)) shared = true;
                         }
                     }
 
@@ -181,8 +176,8 @@ public class Delaunay
             {
                 //Add new triangle to triangulation
                 triangulation.Add(new Triangle(
-                    (edge.x1, edge.y1),
-                    (edge.x2, edge.y2),
+                    edge.A,
+                    edge.B,
                     (node.x, node.y)
                 ));
             }
@@ -201,38 +196,41 @@ public class Delaunay
         }
         DebugSnapshotManager.Instance.AddSnapshot(trianglePoints, triangleLines);
 
-
+        //Clean up triangles that contain super triangle nodes
         var trianglesToRemove = new List<Triangle>();
         foreach (var tri in triangulation)
         {
-            //Clean up triangles that share a node from the super triangle
-            foreach (var edge in SuperTriangle.Edges)
+            if (tri.A == SuperTriangle.A || tri.A == SuperTriangle.B || tri.A == SuperTriangle.C ||
+                tri.B == SuperTriangle.A || tri.B == SuperTriangle.B || tri.B == SuperTriangle.C ||
+                tri.C == SuperTriangle.A || tri.C == SuperTriangle.B || tri.C == SuperTriangle.C)
             {
-                var n1 = (edge.x1, edge.y1);
-                var n2 = (edge.x2, edge.y2);
-                if (tri.A == n1 || tri.B == n1 || tri.C == n1 ||
-                    tri.A == n2 || tri.B == n2 || tri.C == n2)
-                {
-                    trianglesToRemove.Add(tri);
-                    break;
-                }
+                trianglesToRemove.Add(tri);
             }
         }
+
         foreach (var tri in trianglesToRemove)
         {
             triangulation.Remove(tri);
+        }
+
+        //Extract edges from remaining valid triangles
+        foreach (var tri in triangulation)
+        {
+            foreach (var edge in tri.Edges)
+            {
+                if (!delaunayEdges.Contains(edge))
+                    delaunayEdges.Add(edge);
+            }
         }
 
         //DEBUG: Create snapshot of complete triangulation
         DebugSnapshotManager.Instance.SetCategory("delaunay triangulation done");
         triangleLines = new List<(double x1, double y1, double x2, double y2)>();
         trianglePoints = new List<(double x, double y)>();
-        // Add all nodes (room centers) to the points for visualization
+        //Add all nodes (room centers) to the points for visualization
         trianglePoints.AddRange(nodes);
-        foreach (var triangle in triangulation)
-        {
-            triangleLines.AddRange(triangle.GetLines());
-        }
+        //Add all edges from delaunayEdges for visualization
+        triangleLines.AddRange(delaunayEdges.Select(e => e.GetLine()));
         DebugSnapshotManager.Instance.AddSnapshot(trianglePoints, triangleLines);
 
         return delaunayEdges;
