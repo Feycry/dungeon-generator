@@ -85,10 +85,17 @@ public class DungeonGenerator
 
 
         if (seed == -1)
+        {
             //Random seed if seed = -1
-            random = new Random();
-        else
+            seed = Environment.TickCount;
             random = new Random(seed);
+            Console.WriteLine($"Using random seed: {seed}");
+        }
+        else
+        {
+            random = new Random(seed);
+            Console.WriteLine($"Using provided seed: {seed}");
+        }
 
         PlaceRooms();
         Triangulate();
