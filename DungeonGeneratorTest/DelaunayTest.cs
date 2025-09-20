@@ -164,7 +164,7 @@ public class DelaunayTest
         var edges = delaunay.Triangulate();
 
         //Assert
-        Assert.AreEqual(3, edges.Count, "Large coordinates should work correctly");
+        Assert.AreEqual(3, edges.Count, "Narrow coordinates should work correctly");
     }
 
     [TestMethod]
@@ -184,7 +184,7 @@ public class DelaunayTest
         var edges = delaunay.Triangulate();
 
         //Assert
-        Assert.AreEqual(3, edges.Count, "Large coordinates should work correctly");
+        Assert.AreEqual(3, edges.Count, "Wide coordinates should work correctly");
     }
 
     [TestMethod]
