@@ -20,6 +20,7 @@ public class DungeonGenerator
     private Random random = new Random(0);
     private List<(double x, double y)> nodes = new List<(double, double)>();
     private List<Edge> delaunayEdges = new List<Edge>();
+    private List<Edge> hallwayEdges = new List<Edge>();
 
 
     /*
@@ -82,6 +83,8 @@ public class DungeonGenerator
         rooms = new List<Room>();
         grid = new MapGrid(width, height);
         nodes = new List<(double, double)>();
+        delaunayEdges = new List<Edge>();
+        hallwayEdges = new List<Edge>();
 
 
         if (seed == -1)
@@ -99,6 +102,7 @@ public class DungeonGenerator
 
         PlaceRooms();
         Triangulate();
+        PlanHallways();
 
         grid.Print();
     }
@@ -175,7 +179,29 @@ public class DungeonGenerator
         var delaunay = new Delaunay(nodes);
         delaunayEdges = delaunay.Triangulate();
     }
-    
+
+    private void PlanHallways()
+    {
+        var minimumSpenningTree = new MinimumSpanningTree(delaunayEdges, nodes);
+        hallwayEdges = minimumSpenningTree.MST();
+
+        foreach (var edge in hallwayEdges)
+        {
+            Console.WriteLine($"Hallway edge: {edge}");
+        }
+
+        //DEBUG: Create snapshot of MST
+        DebugSnapshotManager.Instance.SetCategory("minimum spanning tree");
+        var hallwayLines = new List<(double x1, double y1, double x2, double y2)>();
+        var hallwayPoints = new List<(double x, double y)>();
+        //Add all nodes (room centers) to the points for visualization
+        hallwayPoints.AddRange(nodes);
+        foreach (var edge in hallwayEdges)
+        {
+            hallwayLines.Add(edge.GetLine());
+        }
+        DebugSnapshotManager.Instance.AddSnapshot(hallwayPoints, hallwayLines);
+    }
     
 
 }
