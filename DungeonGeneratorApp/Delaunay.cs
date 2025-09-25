@@ -115,9 +115,9 @@ public class Delaunay
 
         //Add super triangle
         SuperTriangle = new Triangle(
-            (-0.6 * maxX, 1.2 * maxY),
-            (1.6 * maxX, 1.2 * maxY),
-            (0.6 * maxX, -1.2 * maxY)
+            (-1 * maxX, 2 * maxY),
+            (2 * maxX, 2 * maxY),
+            (1 * maxX, -2 * maxY)
         );
         triangulation.Add(SuperTriangle);
 
