@@ -201,6 +201,30 @@ public class DungeonGenerator
             hallwayLines.Add(edge.GetLine());
         }
         DebugSnapshotManager.Instance.AddSnapshot(hallwayPoints, hallwayLines);
+
+        //Add more hallways randomly to create a few loops
+        foreach (var edge in delaunayEdges)
+        {
+            if (hallwayEdges.Contains(edge))
+                continue;
+
+
+            //Fixed 30% chance for now
+            if (random.NextDouble() < .3)
+                hallwayEdges.Add(edge);
+        }
+
+        //DEBUG: Create snapshot of added hallways
+        DebugSnapshotManager.Instance.SetCategory("minimum spanning tree + additional hallways");
+        hallwayLines = new List<(double x1, double y1, double x2, double y2)>();
+        hallwayPoints = new List<(double x, double y)>();
+        //Add all nodes (room centers) to the points for visualization
+        hallwayPoints.AddRange(nodes);
+        foreach (var edge in hallwayEdges)
+        {
+            hallwayLines.Add(edge.GetLine());
+        }
+        DebugSnapshotManager.Instance.AddSnapshot(hallwayPoints, hallwayLines);
     }
     
 
