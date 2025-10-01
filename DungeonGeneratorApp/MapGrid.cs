@@ -9,16 +9,21 @@ public class MapGrid
 
     int width;
     int height;
-    bool[,] grid;
-    int[,] cost;
+    Tile[,] tiles;
 
     public MapGrid(int width, int height)
     {
         this.width = width;
         this.height = height;
 
-        grid = new bool[width, height];
-        cost = new int[width, height];
+        tiles = new Tile[width, height];
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                tiles[x, y] = new Tile(x, y);
+            }
+        }
     }
 
     public bool AddRoom((int x, int y, int w, int h) room)
@@ -30,7 +35,7 @@ public class MapGrid
             for (int j = room.y; j < room.y + room.h && j < height; j++)
             {
                 if (i < 0 || j < 0) continue;
-                if (grid[i, j] == true)
+                if (tiles[i, j].IsOccupied == true)
                 {
                     //Overlap found, cancel
                     return false;
@@ -43,7 +48,7 @@ public class MapGrid
         //No overlap, fill the room
         foreach (var (i, j) in toFill)
         {
-            grid[i, j] = true;
+            tiles[i, j].IsOccupied = true;
         }
 
         return true;
@@ -60,11 +65,18 @@ public class MapGrid
                 bool isOuterEdge = (x == room.X || x == room.X + room.Width - 1 || y == room.Y || y == room.Y + room.Height - 1);
 
                 if (isOuterEdge && !room.Exits.Contains((x, y)))
-                    cost[x, y] = roomWallCost;
+                    tiles[x, y].Cost = roomWallCost;
                 else
-                    cost[x, y] = roomInsideCost;
+                    tiles[x, y].Cost = roomInsideCost;
             }
         }
+    }
+
+    public List<Tile> GetNeighbours(Tile tile)
+    {
+        var ret = new List<Tile>();
+
+        return ret;
     }
 
     public void Print()
@@ -73,7 +85,7 @@ public class MapGrid
         {
             for (int x = 0; x < width; x++)
             {
-                Console.Write(grid[x, y] ? '#' : '.');
+                Console.Write(tiles[x, y].IsOccupied ? '#' : '.');
             }
             Console.WriteLine();
         }
