@@ -4,9 +4,13 @@ namespace DungeonGeneratorApp;
 
 public class MapGrid
 {
+    private const int roomWallCost = 100;
+    private const int roomInsideCost = 0;
+
     int width;
     int height;
     bool[,] grid;
+    int[,] cost;
 
     public MapGrid(int width, int height)
     {
@@ -14,6 +18,7 @@ public class MapGrid
         this.height = height;
 
         grid = new bool[width, height];
+        cost = new int[width, height];
     }
 
     public bool AddRoom((int x, int y, int w, int h) room)
@@ -42,6 +47,24 @@ public class MapGrid
         }
 
         return true;
+    }
+
+    public void AddRoomCosts(Room room)
+    {
+        for (int x = room.X; x < room.X + room.Width && x < width; x++)
+        {
+            for (int y = room.Y; y < room.Y + room.Height && y < height; y++)
+            {
+                if (x < 0 || y < 0) continue;
+
+                bool isOuterEdge = (x == room.X || x == room.X + room.Width - 1 || y == room.Y || y == room.Y + room.Height - 1);
+
+                if (isOuterEdge && !room.Exits.Contains((x, y)))
+                    cost[x, y] = roomWallCost;
+                else
+                    cost[x, y] = roomInsideCost;
+            }
+        }
     }
 
     public void Print()

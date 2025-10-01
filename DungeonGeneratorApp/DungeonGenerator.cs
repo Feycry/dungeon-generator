@@ -103,6 +103,7 @@ public class DungeonGenerator
         PlaceRooms();
         Triangulate();
         PlanHallways();
+        SetGridCosts();
 
         grid.Print();
     }
@@ -159,7 +160,9 @@ public class DungeonGenerator
             return false;
         }
 
-        rooms.Add(new Room(x, y, w, h));
+        var room = new Room(x, y, w, h);
+        room.PlanExits(random);
+        rooms.Add(room);
 
         return true;
     }
@@ -226,6 +229,12 @@ public class DungeonGenerator
         }
         DebugSnapshotManager.Instance.AddSnapshot(hallwayPoints, hallwayLines);
     }
-    
 
+    private void SetGridCosts()
+    {
+        foreach (var room in rooms)
+        {
+            grid.AddRoomCosts(room);
+        }
+    }
 }
