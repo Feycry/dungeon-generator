@@ -16,7 +16,7 @@ public sealed class SuperTriangleTest
         point = (3, 3);
         Assert.IsTrue(triangle.ContainsPoint(point), $"{point} should be inside triangle");
 
-        // Points outside
+        //Points outside
         point = (-1, 0);
         Assert.IsFalse(triangle.ContainsPoint(point), $"{point} should be outside triangle");
         point = (15, 0);
