@@ -104,6 +104,7 @@ public class DungeonGenerator
         Triangulate();
         PlanHallways();
         SetGridCosts();
+        CreateHallways();
 
         grid.Print();
     }
@@ -188,11 +189,6 @@ public class DungeonGenerator
         var minimumSpenningTree = new MinimumSpanningTree(delaunayEdges, nodes);
         hallwayEdges = minimumSpenningTree.MST();
 
-        foreach (var edge in hallwayEdges)
-        {
-            Console.WriteLine($"Hallway edge: {edge}");
-        }
-
         //DEBUG: Create snapshot of MST
         DebugSnapshotManager.Instance.SetCategory("minimum spanning tree");
         var hallwayLines = new List<(double x1, double y1, double x2, double y2)>();
@@ -235,6 +231,24 @@ public class DungeonGenerator
         foreach (var room in rooms)
         {
             grid.AddRoomCosts(room);
+        }
+    }
+
+    private void CreateHallways()
+    {
+        var pathFinder = new PathFinder(grid);
+
+        foreach (var edge in hallwayEdges)
+        {
+            int x1 = Convert.ToInt32(edge.A.x);
+            int y1 = Convert.ToInt32(edge.A.y);
+            int x2 = Convert.ToInt32(edge.B.x);
+            int y2 = Convert.ToInt32(edge.B.y);
+
+            pathFinder.FindPath((x1, y1), (x2, y2));
+
+            grid.Print();
+            //Console.WriteLine();
         }
     }
 }

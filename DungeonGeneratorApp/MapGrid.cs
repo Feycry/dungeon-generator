@@ -26,6 +26,19 @@ public class MapGrid
         }
     }
 
+    public Tile GetTile(int x, int y)
+    {
+        return tiles[x, y];
+    }
+
+    public void AddPath(List<Tile> path)
+    {
+        foreach (var tile in path) {
+            if (tile.type == TileType.Empty)
+                tile.type = TileType.Path;
+        }
+    }
+
     public bool AddRoom((int x, int y, int w, int h) room)
     {
         var toFill = new List<(int, int)>();
@@ -35,7 +48,7 @@ public class MapGrid
             for (int j = room.y; j < room.y + room.h && j < height; j++)
             {
                 if (i < 0 || j < 0) continue;
-                if (tiles[i, j].IsOccupied == true)
+                if (tiles[i, j].type != TileType.Empty)
                 {
                     //Overlap found, cancel
                     return false;
@@ -48,7 +61,7 @@ public class MapGrid
         //No overlap, fill the room
         foreach (var (i, j) in toFill)
         {
-            tiles[i, j].IsOccupied = true;
+            tiles[i, j].type = TileType.Room;
         }
 
         return true;
@@ -76,6 +89,23 @@ public class MapGrid
     {
         var ret = new List<Tile>();
 
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
+            {
+                if (x == 0 && y == 0)
+                    continue;
+
+                int checkX = tile.X + x;
+                int checkY = tile.Y + y;
+
+                if (checkX >= 0 && checkX < width && checkY >= 0 && checkY < height)
+                {
+                    ret.Add(tiles[checkX, checkY]);
+                }
+            }
+        }
+
         return ret;
     }
 
@@ -85,7 +115,7 @@ public class MapGrid
         {
             for (int x = 0; x < width; x++)
             {
-                Console.Write(tiles[x, y].IsOccupied ? '#' : '.');
+                Console.Write(tiles[x, y].type != TileType.Empty ? '#' : '.');
             }
             Console.WriteLine();
         }
