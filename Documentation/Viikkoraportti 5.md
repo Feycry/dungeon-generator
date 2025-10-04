@@ -1,9 +1,9 @@
-Viikko 5. Käytetty aika noin 6 tuntia.
+Viikko 5. Käytetty aika noin 8 tuntia.
 
 
 ### Mitä olen tehnyt tällä viikolla?
 
-Osallistuin opetustilaisuuteen testausta koskien. Toteutin A*-polunetsinnän. Tein myös yksikkötestit Kruskalin algoritmille, hyödyntäen Primin algoritmia.
+Osallistuin opetustilaisuuteen testausta koskien. Tein vertaisarvioinnin. Toteutin A*-polunetsinnän. Tein myös yksikkötestit Kruskalin algoritmille, hyödyntäen Primin algoritmia.
 
 ### Miten ohjelma on edistynyt?
 
