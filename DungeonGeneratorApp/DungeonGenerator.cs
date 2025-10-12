@@ -247,7 +247,7 @@ public class DungeonGenerator
 
             pathFinder.FindPath((x1, y1), (x2, y2));
 
-            grid.Print();
+            //grid.Print();
             //Console.WriteLine();
         }
     }
