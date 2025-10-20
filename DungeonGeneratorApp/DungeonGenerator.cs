@@ -131,7 +131,13 @@ public class DungeonGenerator
 
         foreach (var r in rooms)
         {
-            nodes.Add(r.GetCenter());
+            var center = r.GetCenter();
+            //Apply small offset to avoid collinear cases in triangulation
+            var offsetCenter = (
+                center.x + (random.NextDouble() - 0.5) * 1e-10,
+                center.y + (random.NextDouble() - 0.5) * 1e-10
+            );
+            nodes.Add(offsetCenter);
         }
 
         //DEBUG: Add a single snapshot after all rooms have been placed
