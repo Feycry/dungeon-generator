@@ -5,13 +5,18 @@ namespace DungeonGeneratorApp;
 public class PathFinder
 {
     private const int straightCost = 10;
-    private const int diagonalCost = 14;
+    //private const int diagonalCost = 14;
+    private int diagonalCost = 14;
     private MapGrid grid;
+    private bool allowDiagonals;
 
-    public PathFinder(MapGrid grid)
+    public PathFinder(MapGrid grid, bool allowDiagonals = true)
     {
         this.grid = grid;
-    }
+        this.allowDiagonals = allowDiagonals;
+
+        diagonalCost = 500000; //Way higher than 10, but nowhere near the integer limit
+        }
 
     //A* pathfinding
     public void FindPath((int x, int y) start, (int x, int y) end)
@@ -45,7 +50,7 @@ public class PathFinder
                 return;
             }
 
-            foreach (var neighbour in grid.GetNeighbours(currentTile))
+            foreach (var neighbour in grid.GetNeighbours(currentTile, allowDiagonals))
             {
                 if (closedSet.Contains(neighbour))
                     continue;

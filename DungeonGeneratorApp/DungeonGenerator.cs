@@ -7,6 +7,7 @@ public class DungeonGenerator
     private int width;
     private int height;
     private int seed;
+    private bool allowDiagonals;
 
     private List<(int x, int y, int w, int h)> fixedRooms = new List<(int, int, int, int)>();
     private int roomCount;
@@ -45,6 +46,7 @@ public class DungeonGenerator
         int width,
         int height,
         int seed,
+        bool allowDiagonals,
         List<(int x, int y, int w, int h)>? fixedRooms = null,
         int? roomCount = null,
         int minRoomSideSize = 1,
@@ -55,6 +57,7 @@ public class DungeonGenerator
         this.width = width;
         this.height = height;
         this.seed = seed;
+        this.allowDiagonals = allowDiagonals;
 
         if (fixedRooms != null)
             this.fixedRooms = new List<(int, int, int, int)>(fixedRooms);
@@ -242,7 +245,7 @@ public class DungeonGenerator
 
     private void CreateHallways()
     {
-        var pathFinder = new PathFinder(grid);
+        var pathFinder = new PathFinder(grid, allowDiagonals);
 
         foreach (var edge in hallwayEdges)
         {

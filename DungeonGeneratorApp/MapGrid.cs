@@ -85,7 +85,7 @@ public class MapGrid
         }
     }
 
-    public List<Tile> GetNeighbours(Tile tile)
+    public List<Tile> GetNeighbours(Tile tile, bool allowDiagonals = true)
     {
         var ret = new List<Tile>();
 
@@ -94,6 +94,10 @@ public class MapGrid
             for (int y = -1; y <= 1; y++)
             {
                 if (x == 0 && y == 0)
+                    continue;
+
+                // Skip diagonal neighbors if diagonals are not allowed
+                if (!allowDiagonals && x != 0 && y != 0)
                     continue;
 
                 int checkX = tile.X + x;
