@@ -260,4 +260,9 @@ public class DungeonGenerator
             //Console.WriteLine();
         }
     }
+
+    public bool[,] GetBooleanMap()
+    {
+        return grid.GetBooleanMap();
+    }
 }
