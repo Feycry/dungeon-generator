@@ -25,7 +25,7 @@ public class Tile
     {
         X = x;
         Y = y;
-        Cost = 20;
+        Cost = 10;
         Parent = this;
     }
 }
