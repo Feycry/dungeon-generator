@@ -34,8 +34,12 @@ public class MapGrid
     public void AddPath(List<Tile> path)
     {
         foreach (var tile in path) {
-            if (tile.type == TileType.Empty)
+            //if (tile.type == TileType.Empty)
+            //{
                 tile.type = TileType.Path;
+                tile.Cost = 0;
+            //}
+
         }
     }
 
@@ -74,6 +78,12 @@ public class MapGrid
             for (int y = room.Y; y < room.Y + room.Height && y < height; y++)
             {
                 if (x < 0 || y < 0) continue;
+
+                if (room.Height == 0 || room.Width == 0)
+                {
+                    tiles[x, y].Cost = roomInsideCost;
+                    continue;
+                }
 
                 bool isOuterEdge = (x == room.X || x == room.X + room.Width - 1 || y == room.Y || y == room.Y + room.Height - 1);
 
@@ -119,7 +129,28 @@ public class MapGrid
         {
             for (int x = 0; x < width; x++)
             {
-                Console.Write(tiles[x, y].type != TileType.Empty ? '#' : '.');
+                switch (tiles[x, y].type)
+                {
+                    case TileType.Empty:
+                        Console.Write('.');
+                        break;
+                    case TileType.Path:
+                        Console.Write('0');
+                        break;
+                    case TileType.Room:
+                        Console.Write('#');
+                        break;
+                }
+                
+            }
+            Console.WriteLine();
+        }
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                Console.Write($"{tiles[x, y].Cost,3} ");
             }
             Console.WriteLine();
         }

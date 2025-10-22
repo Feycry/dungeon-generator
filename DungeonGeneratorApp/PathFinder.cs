@@ -15,8 +15,8 @@ public class PathFinder
         this.grid = grid;
         this.allowDiagonals = allowDiagonals;
 
-        diagonalCost = 500000; //Way higher than 10, but nowhere near the integer limit
-        }
+        if (!allowDiagonals) diagonalCost = 500000; //Way higher than 10, but nowhere near the integer limit
+    }
 
     //A* pathfinding
     public void FindPath((int x, int y) start, (int x, int y) end)
