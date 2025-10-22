@@ -1,0 +1,135 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="DungeonVisualizerAvaloniaApp.MainWindow"
+        Title="Dungeon Generator Visualizer (Cross-Platform)" 
+        Width="1200" Height="800">
+    <Grid ColumnDefinitions="300,*">
+        
+        <!-- Left Panel - Controls -->
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
+                <TextBlock Text="Dungeon Parameters" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                <!-- Width Slider -->
+                <TextBlock Text="Width:" FontWeight="SemiBold"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="WidthSlider" Grid.Column="0"
+                            Minimum="10" Maximum="150" Value="50" 
+                            TickFrequency="10" IsSnapToTickEnabled="True"
+                            PropertyChanged="Parameter_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #WidthSlider.Value}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Height Slider -->
+                <TextBlock Text="Height:" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="HeightSlider" Grid.Column="0"
+                            Minimum="10" Maximum="150" Value="50" 
+                            TickFrequency="10" IsSnapToTickEnabled="True"
+                            PropertyChanged="Parameter_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #HeightSlider.Value}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Room Count Slider -->
+                <TextBlock Text="Room Count:" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="RoomCountSlider" Grid.Column="0"
+                            Minimum="3" Maximum="50" Value="15" 
+                            TickFrequency="1" IsSnapToTickEnabled="True"
+                            PropertyChanged="Parameter_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #RoomCountSlider.Value}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Min Room Size Slider -->
+                <TextBlock Text="Min Room Size:" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="MinRoomSizeSlider" Grid.Column="0"
+                            Minimum="1" Maximum="10" Value="2" 
+                            TickFrequency="1" IsSnapToTickEnabled="True"
+                            PropertyChanged="Parameter_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #MinRoomSizeSlider.Value}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Max Room Size Slider -->
+                <TextBlock Text="Max Room Size:" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="MaxRoomSizeSlider" Grid.Column="0"
+                            Minimum="3" Maximum="20" Value="9" 
+                            TickFrequency="1" IsSnapToTickEnabled="True"
+                            PropertyChanged="Parameter_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #MaxRoomSizeSlider.Value}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Room Size Mean Slider -->
+                <TextBlock Text="Room Size Mean:" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="RoomSizeMeanSlider" Grid.Column="0"
+                            Minimum="1" Maximum="15" Value="4" 
+                            TickFrequency="0.5"
+                            PropertyChanged="Parameter_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #RoomSizeMeanSlider.Value, StringFormat='{}{0:F1}'}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Room Size Variance Slider -->
+                <TextBlock Text="Room Size Variance:" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="RoomSizeVarianceSlider" Grid.Column="0"
+                            Minimum="0.1" Maximum="5" Value="1.6" 
+                            TickFrequency="0.1"
+                            PropertyChanged="Parameter_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #RoomSizeVarianceSlider.Value, StringFormat='{}{0:F1}'}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Seed Input -->
+                <TextBlock Text="Seed (-1 for random):" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                <TextBox x:Name="SeedTextBox" Text="-1" PropertyChanged="Parameter_Changed"/>
+
+                <!-- Allow Diagonals Checkbox -->
+                <CheckBox x:Name="AllowDiagonalsCheckBox" Content="Allow Diagonal Hallways" 
+                          Margin="0,10,0,0" PropertyChanged="Parameter_Changed"/>
+
+                <!-- Generate Button -->
+                <Button x:Name="GenerateButton" Content="Generate Dungeon" 
+                        Margin="0,20,0,0" Height="40" FontSize="16" FontWeight="Bold"
+                        Click="GenerateButton_Click"/>
+
+                <!-- Status Text -->
+                <TextBlock x:Name="StatusText" Text="Ready" Margin="0,10,0,0" 
+                           TextWrapping="Wrap" Foreground="Gray"/>
+
+                <!-- Cell Size Slider -->
+                <TextBlock Text="Cell Display Size:" FontWeight="SemiBold" Margin="0,20,0,0"/>
+                <Grid ColumnDefinitions="*,50">
+                    <Slider x:Name="CellSizeSlider" Grid.Column="0"
+                            Minimum="2" Maximum="20" Value="8" 
+                            TickFrequency="1" IsSnapToTickEnabled="True"
+                            PropertyChanged="CellSize_Changed"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{Binding #CellSizeSlider.Value}" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Right Panel - Dungeon Visualization -->
+        <Border Grid.Column="1" BorderBrush="Gray" BorderThickness="1" Margin="5">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Canvas x:Name="DungeonCanvas" Background="White"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
