@@ -2,11 +2,18 @@ using System;
 
 namespace DungeonGeneratorApp;
 
+/// <summary>
+/// Union-Find data structure for efficient set operations.
+/// </summary>
 public class UnionFind
 {
     Dictionary<(double, double), (double, double)> link = new Dictionary<(double, double), (double, double)>();
     Dictionary<(double, double), double> size = new Dictionary<(double, double), double>();
 
+    /// <summary>
+    /// Initializes the Union-Find structure with the given nodes.
+    /// </summary>
+    /// <param name="nodes">List of nodes to initialize.</param>
     public UnionFind(List<(double, double)> nodes)
     {
         foreach (var node in nodes)
@@ -16,6 +23,11 @@ public class UnionFind
         }
     }
 
+    /// <summary>
+    /// Finds the root representative of the set containing the given node.
+    /// </summary>
+    /// <param name="x">The node to find.</param>
+    /// <returns>The root representative of the set.</returns>
     public (double, double) Find((double, double) x)
     {
         if (!link[x].Equals(x))
@@ -26,6 +38,11 @@ public class UnionFind
         return link[x];
     }
     
+    /// <summary>
+    /// Merges the sets containing the two given nodes.
+    /// </summary>
+    /// <param name="a">First node.</param>
+    /// <param name="b">Second node.</param>
     public void Union((double, double) a, (double, double) b)
     {
         var rootA = Find(a);
@@ -47,11 +64,19 @@ public class UnionFind
     }
 }
 
+/// <summary>
+/// Computes the minimum spanning tree using Kruskal's algorithm.
+/// </summary>
 public class MinimumSpanningTree
 {
     private List<Edge> edges = new List<Edge>();
     private List<(double, double)> nodes = new List<(double, double)>();
 
+    /// <summary>
+    /// Creates a minimum spanning tree calculator with the given edges and nodes.
+    /// </summary>
+    /// <param name="edges">List of edges to consider.</param>
+    /// <param name="nodes">List of nodes in the graph.</param>
     public MinimumSpanningTree(List<Edge> edges, List<(double, double)> nodes)
     {
         if (edges == null || edges.Count < 1 || nodes.Count < 2)
@@ -64,7 +89,10 @@ public class MinimumSpanningTree
 
     }
 
-    //Implementation of Kruskal's algorithm
+    /// <summary>
+    /// Computes the minimum spanning tree using Kruskal's algorithm.
+    /// </summary>
+    /// <returns>List of edges forming the MST, or empty list if construction fails.</returns>
     public List<Edge> MST()
     {
         var mst = new List<Edge>();

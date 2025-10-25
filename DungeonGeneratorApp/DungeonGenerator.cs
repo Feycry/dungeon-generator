@@ -2,6 +2,9 @@ using System;
 
 namespace DungeonGeneratorApp;
 
+/// <summary>
+/// Generates procedural dungeons with rooms and hallways.
+/// </summary>
 public class DungeonGenerator
 {
     private int width;
@@ -23,25 +26,19 @@ public class DungeonGenerator
     private List<Edge> delaunayEdges = new List<Edge>();
     private List<Edge> hallwayEdges = new List<Edge>();
 
-
-    /*
-                        Syötteet:
-                        - Kartan leveys, esim. 100 solua
-                        - Kartan korkeus, esim. 150 solua
-                        - Siemenluku (seed) satunnaisgenerointia varten
-                        Vapaavalinnaiset syötteet:
-                        - Lista huoneita, jotka aina generoidaan. Jokainen listassa oleva huone on tuple muotoa (x, y, leveys, korkeus). Lista voi olla tyhjä. Kartan ulkopuolelle (edes osittain) sijoittuvat huoneet johtavat virhetulosteeseen.
-                            - x on huoneen vasemman laidan koordinaatti
-                            - y on huoneen ylälaidan koordinaatti
-                            - leveys on huoneen leveys soluina
-                            - korkeus on huoneen korkeus soluina
-                        - Huoneiden määrä, oletusarvo määräytyy lukuna suhteessa kartan kokoon (esim. floor(0.1*(leveys+korkeus)))
-                        - Huoneen sivun pituuden minimi, oletusarvo 1 solua
-                        - Huoneen sivun pituuden maksimi, oletusarvo 9 solua
-                        - Huoneiden koon määrittävän normaalijakauman odotusarvo, oletusarvona 4 (solua)
-                        - Huoneiden koon määrittävän normaalijakauman varianssi, oletusarvona 1.6
-                    */
-
+    /// <summary>
+    /// Creates a new dungeon generator with the specified parameters.
+    /// </summary>
+    /// <param name="width">Map width in cells.</param>
+    /// <param name="height">Map height in cells.</param>
+    /// <param name="seed">Random seed for generation. Use -1 for random seed.</param>
+    /// <param name="allowDiagonals">Whether to allow diagonal pathfinding.</param>
+    /// <param name="fixedRooms">Optional list of rooms to always generate at specific locations.</param>
+    /// <param name="roomCount">Number of random rooms. Defaults to floor(0.1*(width+height)).</param>
+    /// <param name="minRoomSideSize">Minimum room side length in cells.</param>
+    /// <param name="maxRoomSideSize">Maximum room side length in cells.</param>
+    /// <param name="roomSideSizeMean">Mean value for room size normal distribution.</param>
+    /// <param name="roomSideSizeVariance">Variance for room size normal distribution.</param>
     public DungeonGenerator(
         int width,
         int height,
@@ -76,6 +73,10 @@ public class DungeonGenerator
         this.roomSideSizeMean = roomSideSizeMean;
         this.roomSideSizeVariance = roomSideSizeVariance;
     }
+    
+    /// <summary>
+    /// Generates the dungeon by placing rooms, creating triangulation, and connecting with hallways.
+    /// </summary>
     public void Generate()
     {
         Console.WriteLine("Generation started");
@@ -112,6 +113,9 @@ public class DungeonGenerator
         grid.Print();
     }
 
+    /// <summary>
+    /// Places fixed and random rooms on the map grid.
+    /// </summary>
     private void PlaceRooms()
     {
         //Place initial rooms
@@ -148,6 +152,10 @@ public class DungeonGenerator
         DebugSnapshotManager.Instance.AddSnapshot(nodes, new List<(double, double, double, double)>());
     }
 
+    /// <summary>
+    /// Creates a single random room with normally distributed size.
+    /// </summary>
+    /// <returns>True if the room was successfully placed.</returns>
     private bool CreateRandomRoom()
     {
         int w = Math.Max(minRoomSideSize, Math.Min(maxRoomSideSize, (int)Math.Round(NormalRandom(roomSideSizeMean, roomSideSizeVariance))));
@@ -177,7 +185,9 @@ public class DungeonGenerator
         return true;
     }
 
-    //Maybe move this elsewhere?
+    /// <summary>
+    /// Generates a random number from a normal distribution using Box-Muller transform.
+    /// </summary>
     private double NormalRandom(double mean, double variance)
     {
         //Box-Muller transform
@@ -187,12 +197,18 @@ public class DungeonGenerator
         return mean + Math.Sqrt(variance) * randStdNormal;
     }
 
+    /// <summary>
+    /// Performs Delaunay triangulation on room centers.
+    /// </summary>
     private void Triangulate()
     {
         var delaunay = new Delaunay(nodes);
         delaunayEdges = delaunay.Triangulate();
     }
 
+    /// <summary>
+    /// Plans hallway connections using MST and adds random extra connections.
+    /// </summary>
     private void PlanHallways()
     {
         var minimumSpenningTree = new MinimumSpanningTree(delaunayEdges, nodes);
@@ -235,6 +251,9 @@ public class DungeonGenerator
         DebugSnapshotManager.Instance.AddSnapshot(hallwayPoints, hallwayLines);
     }
 
+    /// <summary>
+    /// Sets movement costs on the grid.
+    /// </summary>
     private void SetGridCosts()
     {
         foreach (var room in rooms)
@@ -243,6 +262,9 @@ public class DungeonGenerator
         }
     }
 
+    /// <summary>
+    /// Creates hallways between rooms using pathfinding.
+    /// </summary>
     private void CreateHallways()
     {
         var pathFinder = new PathFinder(grid, allowDiagonals);
@@ -261,6 +283,9 @@ public class DungeonGenerator
         }
     }
 
+    /// <summary>
+    /// Returns the dungeon as a boolean array where true represents walkable tiles.
+    /// </summary>
     public bool[,] GetBooleanMap()
     {
         return grid.GetBooleanMap();

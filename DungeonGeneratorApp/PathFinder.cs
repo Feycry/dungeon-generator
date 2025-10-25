@@ -2,6 +2,9 @@ using System;
 
 namespace DungeonGeneratorApp;
 
+/// <summary>
+/// Finds paths between points on the map grid using A* algorithm.
+/// </summary>
 public class PathFinder
 {
     private const int straightCost = 10;
@@ -10,6 +13,11 @@ public class PathFinder
     private MapGrid grid;
     private bool allowDiagonals;
 
+    /// <summary>
+    /// Creates a new pathfinder for the given grid.
+    /// </summary>
+    /// <param name="grid">The map grid to find paths on.</param>
+    /// <param name="allowDiagonals">Whether diagonal movement is allowed.</param>
     public PathFinder(MapGrid grid, bool allowDiagonals = true)
     {
         this.grid = grid;
@@ -18,7 +26,11 @@ public class PathFinder
         if (!allowDiagonals) diagonalCost = 4*14; //Higher than 14
     }
 
-    //A* pathfinding
+    /// <summary>
+    /// Finds and applies a path between two points using A* algorithm.
+    /// </summary>
+    /// <param name="start">Starting coordinates (x, y).</param>
+    /// <param name="end">Ending coordinates (x, y).</param>
     public void FindPath((int x, int y) start, (int x, int y) end)
     {
         Tile startTile = grid.GetTile(start.x, start.y);
@@ -76,6 +88,11 @@ public class PathFinder
         return;
     }
 
+    /// <summary>
+    /// Retraces and applies the path from start to end tile.
+    /// </summary>
+    /// <param name="start">Starting tile.</param>
+    /// <param name="end">Ending tile.</param>
     private void RetracePath(Tile start, Tile end)
     {
         List<Tile> path = new List<Tile>();
@@ -92,6 +109,12 @@ public class PathFinder
         grid.AddPath(path);
     }
 
+    /// <summary>
+    /// Calculates the heuristic distance between two tiles.
+    /// </summary>
+    /// <param name="a">First tile.</param>
+    /// <param name="b">Second tile.</param>
+    /// <returns>Estimated distance cost.</returns>
     private int GetDistance(Tile a, Tile b)
     {
         int distX = Math.Abs(a.X - b.X);

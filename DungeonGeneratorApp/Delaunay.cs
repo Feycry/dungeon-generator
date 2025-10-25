@@ -3,13 +3,33 @@ using System.Diagnostics;
 
 namespace DungeonGeneratorApp;
 
+/// <summary>
+/// Represents a triangle with three vertices.
+/// </summary>
 public class Triangle {
+    /// <summary>
+    /// First vertex of the triangle.
+    /// </summary>
     public (double x, double y) A { get; set; }
+    
+    /// <summary>
+    /// Second vertex of the triangle.
+    /// </summary>
     public (double x, double y) B { get; set; }
+    
+    /// <summary>
+    /// Third vertex of the triangle.
+    /// </summary>
     public (double x, double y) C { get; set; }
 
+    /// <summary>
+    /// The three edges of the triangle.
+    /// </summary>
     public List<Edge> Edges = new List<Edge>();
 
+    /// <summary>
+    /// Creates a triangle with the given vertices, sorted by coordinates.
+    /// </summary>
     public Triangle((double x, double y) a, (double x, double y) b, (double x, double y) c)
     {
         var vertices = new List<(double x, double y)> { a, b, c };
@@ -30,7 +50,14 @@ public class Triangle {
         Edges.Add(new Edge(C, A));
     }
 
-    //https://en.wikipedia.org/wiki/Circumcircle#Cartesian_coordinates
+    /// <summary>
+    /// Checks if a point is inside the triangle's circumcircle.
+    /// </summary>
+    /// <param name="point">The point to check.</param>
+    /// <returns>True if the point is inside the circumcircle.</returns>
+    /// <remarks>
+    /// See https://en.wikipedia.org/wiki/Circumcircle#Cartesian_coordinates
+    /// </remarks>
     public bool InCircumcircle((double x, double y) point)
     {
         var a = A;
@@ -60,7 +87,11 @@ public class Triangle {
         return distance < radius;
     }
 
-    //For unit tests
+    /// <summary>
+    /// Checks if a point is inside the triangle.
+    /// </summary>
+    /// <param name="point">The point to check.</param>
+    /// <returns>True if the point is inside the triangle.</returns>
     public bool ContainsPoint((double x, double y) point)
     {
         var v0 = (C.x - A.x, C.y - A.y);
@@ -80,23 +111,34 @@ public class Triangle {
         return (u >= 0) && (v >= 0) && (u + v <= 1);
     }
 
-    //DEBUG
+    /// <summary>
+    /// Returns the triangle's edges as line coordinates for visualization.
+    /// </summary>
+    /// <returns>List of line segments as (x1, y1, x2, y2) tuples.</returns>
     public List<(double x1, double y1, double x2, double y2)> GetLines()
     {
         return Edges.Select(e => e.GetLine()).ToList();
     }
 }
 
-//Bowyer–Watson algorithm implementation
+/// <summary>
+/// Performs Delaunay triangulation using the Bowyer-Watson algorithm.
+/// </summary>
 public class Delaunay
 {
     double maxX;
     double maxY;
     private List<(double x, double y)> nodes = new List<(double x, double y)>();
     
-    //For unit tests
+    /// <summary>
+    /// The super triangle used during triangulation.
+    /// </summary>
     public Triangle? SuperTriangle { get; private set; }
 
+    /// <summary>
+    /// Creates a Delaunay triangulator for the given nodes.
+    /// </summary>
+    /// <param name="nodes">List of points to triangulate.</param>
     public Delaunay(List<(double x, double y)> nodes)
     {
         if (nodes == null || nodes.Count < 3)
@@ -108,6 +150,10 @@ public class Delaunay
         maxY = Math.Ceiling(nodes.Max(n => n.y));
     }
 
+    /// <summary>
+    /// Performs Delaunay triangulation and returns the resulting edges.
+    /// </summary>
+    /// <returns>List of edges forming the Delaunay triangulation.</returns>
     public List<Edge> Triangulate()
     {
         var delaunayEdges = new List<Edge>();

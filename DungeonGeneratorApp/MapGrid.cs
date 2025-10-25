@@ -2,6 +2,9 @@ using System;
 
 namespace DungeonGeneratorApp;
 
+/// <summary>
+/// Represents the dungeon map as a grid of tiles.
+/// </summary>
 public class MapGrid
 {
     private const int roomWallCost = 100;
@@ -11,6 +14,11 @@ public class MapGrid
     int height;
     Tile[,] tiles;
 
+    /// <summary>
+    /// Creates a new map grid with the specified dimensions.
+    /// </summary>
+    /// <param name="width">Width of the grid in tiles.</param>
+    /// <param name="height">Height of the grid in tiles.</param>
     public MapGrid(int width, int height)
     {
         this.width = width;
@@ -26,11 +34,21 @@ public class MapGrid
         }
     }
 
+    /// <summary>
+    /// Gets the tile at the specified coordinates.
+    /// </summary>
+    /// <param name="x">X coordinate.</param>
+    /// <param name="y">Y coordinate.</param>
+    /// <returns>The tile at the specified position.</returns>
     public Tile GetTile(int x, int y)
     {
         return tiles[x, y];
     }
 
+    /// <summary>
+    /// Marks tiles along a path as walkable path tiles.
+    /// </summary>
+    /// <param name="path">List of tiles forming the path.</param>
     public void AddPath(List<Tile> path)
     {
         foreach (var tile in path) {
@@ -43,6 +61,11 @@ public class MapGrid
         }
     }
 
+    /// <summary>
+    /// Attempts to place a room on the grid.
+    /// </summary>
+    /// <param name="room">Room dimensions as (x, y, width, height).</param>
+    /// <returns>True if the room was placed successfully without overlaps.</returns>
     public bool AddRoom((int x, int y, int w, int h) room)
     {
         var toFill = new List<(int, int)>();
@@ -71,6 +94,10 @@ public class MapGrid
         return true;
     }
 
+    /// <summary>
+    /// Sets movement costs for tiles in a room based on walls and exits.
+    /// </summary>
+    /// <param name="room">The room to add costs for.</param>
     public void AddRoomCosts(Room room)
     {
         for (int x = room.X; x < room.X + room.Width && x < width; x++)
@@ -95,6 +122,12 @@ public class MapGrid
         }
     }
 
+    /// <summary>
+    /// Gets all neighboring tiles of the given tile.
+    /// </summary>
+    /// <param name="tile">The tile to get neighbors for.</param>
+    /// <param name="allowDiagonals">Whether to include diagonal neighbors.</param>
+    /// <returns>List of neighboring tiles.</returns>
     public List<Tile> GetNeighbours(Tile tile, bool allowDiagonals = true)
     {
         var ret = new List<Tile>();
@@ -123,6 +156,10 @@ public class MapGrid
         return ret;
     }
 
+    /// <summary>
+    /// Returns the map as a boolean array where true represents non-empty tiles.
+    /// </summary>
+    /// <returns>2D boolean array representing the map.</returns>
     public bool[,] GetBooleanMap()
     {
         var map = new bool[width, height];
@@ -136,6 +173,9 @@ public class MapGrid
         return map;
     }
 
+    /// <summary>
+    /// Prints the map to the console for debugging.
+    /// </summary>
     public void Print()
     {
         for (int y = 0; y < height; y++)
