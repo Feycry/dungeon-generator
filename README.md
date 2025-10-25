@@ -1,6 +1,6 @@
 # dungeon-generator
 
-Määrittelydokumentti ja viikkoraportti "Documentation" kansiossa.
+Määrittelydokumentti, viikkoraportit, testausdokumentti ja toteutusdokumentti "Documentation" kansiossa.
 
 ## Prerequisites
 
@@ -42,6 +42,32 @@ dotnet --version
 You must create the images folder manually in order to see debug snapshots of the generation process.
 
 The program can also be run from inside an IDE like VSCode.
+
+## Running the Visual UI
+
+The project also includes a visual UI which I recommend using.
+
+1. Navigate to the app directory:
+   ```bash
+   cd DungeonVisualizerAvaloniaApp
+   ```
+
+2. Restore dependencies:
+   ```bash
+   dotnet restore
+   ```
+
+3. Build the project:
+   ```bash
+   dotnet build
+   ```
+
+4. Run the visual application:
+   ```bash
+   dotnet run
+   ```
+
+This provides an interactive GUI where you can visualize the dungeon generation process and use sliders to adjust parameters.
 
 ## Running Tests
 
